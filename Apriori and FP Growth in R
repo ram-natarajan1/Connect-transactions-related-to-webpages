@@ -1,0 +1,23 @@
+read.transactions("C:/Users/Ram/Desktop/connect.txt") -> connect
+connect
+
+rule = apriori(connect,parameter = list(supp=0.5,conf=0.5,minlen=5))
+
+rule=sort(rule,by="lift")
+inspect(rule)
+
+library(rJava)
+library(rCBA)
+white.url <- "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv"
+white <- read.csv(white.url, header = TRUE, sep = ";")
+head(white)
+
+library("rCBA")
+train <- sapply(white,as.factor)
+train <- data.frame(train, check.names=FALSE)
+txns <- as(train,"transactions")
+rules = rCBA::fpgrowth(txns, support=0.03, confidence=0.03, maxLength=2, consequent="quality", parallel=FALSE)
+rules
+
+View(rules)
+rules@quality
